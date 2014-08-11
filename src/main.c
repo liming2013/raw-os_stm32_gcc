@@ -17,8 +17,13 @@ void test_task1(void * pParam)
 	{
 		raw_sleep(50);
 		PDout(11) = 1;
+		PBout(12) = 0;
+		PBout(13) = 1;
 		raw_sleep(50);
 		PDout(11) = 0;
+		PBout(12) = 1;
+		PBout(13) = 0;
+
 	}
 }
 
@@ -41,16 +46,19 @@ void sys_init(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE | RCC_APB2Periph_USART1 | RCC_APB2Periph_AFIO,ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3,ENABLE);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOD,&GPIO_InitStructure);
+	GPIO_Init(GPIOB,&GPIO_InitStructure);
+    
+    /*
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOC,&GPIO_InitStructure);
 
 	PCout(11) = 0;
+    */
 }
 
 int main(void)
