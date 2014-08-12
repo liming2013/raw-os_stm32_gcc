@@ -235,7 +235,7 @@ void tick_list_update(void)
 
 #if (CONFIG_RAW_TICK_TASK > 0)
 
-static void tick_task_process(void *para)
+static void tick_task_process(void *parai __UNUSED)
 {
 	RAW_U16 ret;
 	

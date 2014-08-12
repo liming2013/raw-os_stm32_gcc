@@ -53,7 +53,7 @@
 #ifdef __cplusplus
  extern "C" {
 #endif 
-#define HSE_VALUE ((u32)12000000L)  
+  
 /** @addtogroup Library_configuration_section
   * @{
   */

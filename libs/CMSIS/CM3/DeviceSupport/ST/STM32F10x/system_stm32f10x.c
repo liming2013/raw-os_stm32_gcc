@@ -1053,8 +1053,7 @@ static void SetSysClockTo72(void)
     /*  PLL configuration: PLLCLK = HSE * 9 = 72 MHz */
     RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE |
                                         RCC_CFGR_PLLMULL));
-    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PLLMULL6); //6 是外部高速时钟HSE9倍频数，
-	                                                //如果修改晶振频率12M，总的频率就是 12X6 = 72M。 
+    RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSE | RCC_CFGR_PLLMULL9);
 #endif /* STM32F10X_CL */
 
     /* Enable PLL */

@@ -11,7 +11,7 @@ void delay(unsigned int val)
 	}
 }
 
-void test_task1(void * pParam)
+void test_task1(void * pParam __UNUSED)
 {
 	while(1)
 	{

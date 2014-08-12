@@ -125,6 +125,7 @@ endif
 
 # Generate dependency information
 ASFLAGS  += -MD -MP -MF .dep/$(@F).d
+ASXFLAGS += -MD -MP -MF .dep/$(@F).d
 CFLAGS   += -MD -MP -MF .dep/$(@F).d
 CPPFLAGS += -MD -MP -MF .dep/$(@F).d
 

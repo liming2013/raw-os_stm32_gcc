@@ -38,14 +38,14 @@ RAW_VOID raw_os_init_hook()
 
 
 
-RAW_VOID raw_task_delete_hook(RAW_TASK_OBJ *task_ptr)
+RAW_VOID raw_task_delete_hook(RAW_TASK_OBJ *task_ptr __UNUSED)
 {
 
 
 }
 
 
-RAW_VOID raw_task_abort_hook(RAW_TASK_OBJ *task_ptr)
+RAW_VOID raw_task_abort_hook(RAW_TASK_OBJ *task_ptr __UNUSED)
 {
 
 
@@ -75,7 +75,7 @@ RAW_VOID raw_tick_hook()
 }
 
 
-void task_create_hook(RAW_TASK_OBJ  *task_obj)
+void task_create_hook(RAW_TASK_OBJ  *task_obj __UNUSED)
 {
 	
 	

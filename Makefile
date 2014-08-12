@@ -33,6 +33,21 @@ ifeq ($(USE_FPU),)
   USE_FPU = no
 endif
 
+# For STM32 Low density devices 
+#DEVICE = STM32F10X_LD
+# For STM32 Low density Value line devices 
+#DEVICE = STM32F10X_LD_VL
+# For STM32 Medium density devices 
+DEVICE = STM32F10X_MD
+# For STM32 Medium density Value line devices 
+#DEVICE = STM32F10X_MD_VL
+# For STM32 High density devices 
+#DEVICE = STM32F10X_HD
+# For STM32 XL density devices 
+#DEVICE = STM32F10X_XL
+# For STM32 Connectivity line devices 
+#DEVICE = STM32F10X_CL
+
 #
 # Architecture or project specific options
 ##############################################################################
@@ -87,7 +102,8 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMXSRC = $(PORTASM) $(CMSISASM)
+ASMXSRC = $(STARTUPXASM) $(PORTXASM)
+ASMSRC = $(STARTUPASM)
 
 INCDIR = $(PORTINC) $(KERNELINC) $(DRIVERINC) $(CMSISINC) \
 		 $(ROOT)/inc
@@ -121,7 +137,7 @@ AOPT =
 TOPT = -mthumb -DTHUMB
 
 # Define C warning options here
-CWARN = -Wall -Wextra -Wstrict-prototypes
+CWARN = -Wall -Werror -Wextra -Wstrict-prototypes
 
 # Define C++ warning options here
 CPPWARN = -Wall -Wextra
@@ -135,7 +151,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER
+UDEFS = -D$(DEVICE) -DUSE_STDPERIPH_DRIVER
 
 # Define ASM defines here
 UADEFS =

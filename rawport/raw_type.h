@@ -26,6 +26,7 @@ void        CPU_IntSrcDis    (RAW_U8  pos);
 void        CPU_IntSrcEn     (RAW_U8  pos);
 
 #define RAW_INLINE  		 static __inline
+#define __UNUSED             __attribute__ ((unused))
 
 #endif
 

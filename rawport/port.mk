@@ -1,6 +1,6 @@
 PORTINC = $(ROOT)/rawport
 
-PORTASM = $(ROOT)/rawport/context_gcc.S
+PORTXASM = $(ROOT)/rawport/context_gcc.S
 
 PORTSRC = \
     $(ROOT)/rawport/port.c \
