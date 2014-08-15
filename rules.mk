@@ -66,16 +66,16 @@ SRCPATHS  = $(sort $(dir $(ASMXSRC)) $(dir $(ASMSRC)) $(dir $(ASRC)) $(dir $(TSR
 
 # Various directories
 OBJDIR    = $(BUILDDIR)/obj
-LSTDIR    = $(BUILDDIR)/lst
 
 # Object files groups
-ACOBJS    = $(addprefix $(OBJDIR)/, $(notdir $(ACSRC:.c=.o)))
-ACPPOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ACPPSRC:.cpp=.o)))
-TCOBJS    = $(addprefix $(OBJDIR)/, $(notdir $(TCSRC:.c=.o)))
-TCPPOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(TCPPSRC:.cpp=.o)))
-ASMOBJS   = $(addprefix $(OBJDIR)/, $(notdir $(ASMSRC:.s=.o)))
-ASMXOBJS  = $(addprefix $(OBJDIR)/, $(notdir $(ASMXSRC:.S=.o)))
+ACOBJS    = $(addprefix $(OBJDIR)/, $(ACSRC:.c=.o))
+ACPPOBJS  = $(addprefix $(OBJDIR)/, $(ACPPSRC:.cpp=.o))
+TCOBJS    = $(addprefix $(OBJDIR)/, $(TCSRC:.c=.o))
+TCPPOBJS  = $(addprefix $(OBJDIR)/, $(TCPPSRC:.cpp=.o))
+ASMOBJS   = $(addprefix $(OBJDIR)/, $(ASMSRC:.s=.o))
+ASMXOBJS  = $(addprefix $(OBJDIR)/, $(ASMXSRC:.S=.o))
 OBJS	  = $(ASMXOBJS) $(ASMOBJS) $(ACOBJS) $(TCOBJS) $(ACPPOBJS) $(TCPPOBJS)
+DEPS      = $(OBJS:.o=.d)
 
 # Paths
 IINCDIR   = $(patsubst %,-I%,$(INCDIR) $(DINCDIR) $(UINCDIR))
@@ -91,10 +91,10 @@ LIBS      = $(DLIBS) $(ULIBS)
 # Various settings
 MCFLAGS   = -mcpu=$(MCU)
 ODFLAGS	  = -x --syms
-ASFLAGS   = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.s=.lst)) $(ADEFS)
-ASXFLAGS  = $(MCFLAGS) -Wa,-amhls=$(LSTDIR)/$(notdir $(<:.S=.lst)) $(ADEFS)
-CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.c=.lst)) $(DEFS)
-CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(LSTDIR)/$(notdir $(<:.cpp=.lst)) $(DEFS)
+ASFLAGS   = $(MCFLAGS) -Wa,-amhls=$(@:.o=.lst) $(ADEFS)
+ASXFLAGS  = $(MCFLAGS) -Wa,-amhls=$(@:.o=.lst) $(ADEFS)
+CFLAGS    = $(MCFLAGS) $(OPT) $(COPT) $(CWARN) -Wa,-alms=$(@:.o=.lst) $(DEFS)
+CPPFLAGS  = $(MCFLAGS) $(OPT) $(CPPOPT) $(CPPWARN) -Wa,-alms=$(@:.o=.lst) $(DEFS)
 LDFLAGS   = $(MCFLAGS) $(OPT) -nostartfiles $(LLIBDIR) -Wl,-Map=$(BUILDDIR)/$(PROJECT).map,--cref,--no-warn-mismatch,--library-path=$(RULESPATH),--script=$(LDSCRIPT)$(LDOPT)
 
 # Thumb interwork enabled only if needed because it kills performance.
@@ -124,13 +124,13 @@ else
 endif
 
 # Generate dependency information
-ASFLAGS  += -MD -MP -MF .dep/$(@F).d
-ASXFLAGS += -MD -MP -MF .dep/$(@F).d
-CFLAGS   += -MD -MP -MF .dep/$(@F).d
-CPPFLAGS += -MD -MP -MF .dep/$(@F).d
+ASFLAGS  += -MD -MP -MF $(@:.o=.d)
+ASXFLAGS += -MD -MP -MF $(@:.o=.d)
+CFLAGS   += -MD -MP -MF $(@:.o=.d)
+CPPFLAGS += -MD -MP -MF $(@:.o=.d)
 
 # Paths where to search for sources
-VPATH     = $(SRCPATHS)
+#VPATH     = $(SRCPATHS)
 
 #
 # Makefile rules
@@ -142,41 +142,68 @@ MAKE_ALL_RULE_HOOK:
 
 $(OBJS): | $(BUILDDIR)
 
-$(BUILDDIR) $(OBJDIR) $(LSTDIR):
+$(BUILDDIR) $(OBJDIR):
 	mkdir -p $(OBJDIR)
-	mkdir -p $(LSTDIR)
 
 $(ACPPOBJS) : $(OBJDIR)/%.o : %.cpp Makefile
+	@mkdir -p $(dir $@)
+	@echo
+	@echo Compiling $<
 	$(CPPC) -c $(CPPFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 
 $(TCPPOBJS) : $(OBJDIR)/%.o : %.cpp Makefile
+	@mkdir -p $(dir $@)
+	@echo
+	@echo Compiling $<
 	$(CPPC) -c $(CPPFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 
 $(ACOBJS) : $(OBJDIR)/%.o : %.c Makefile
+	@mkdir -p $(dir $@)
+	@echo
+	@echo Compiling $<
 	$(CC) -c $(CFLAGS) $(AOPT) -I. $(IINCDIR) $< -o $@
 
 $(TCOBJS) : $(OBJDIR)/%.o : %.c Makefile
+	@mkdir -p $(dir $@)
+	@echo
+	@echo Compiling $<
 	$(CC) -c $(CFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 
 $(ASMOBJS) : $(OBJDIR)/%.o : %.s Makefile
+	@mkdir -p $(dir $@)
+	@echo
+	@echo Compiling $<
 	$(AS) -c $(ASFLAGS) -I. $(IINCDIR) $< -o $@
 
 $(ASMXOBJS) : $(OBJDIR)/%.o : %.S Makefile
+	@mkdir -p $(dir $@)
+	@echo
+	@echo Compiling $<
 	$(CC) -c $(ASXFLAGS) $(TOPT) -I. $(IINCDIR) $< -o $@
 
 %.elf: $(OBJS) $(LDSCRIPT)
+	@echo
+	@echo Linking $@
 	$(LD) $(OBJS) $(LDFLAGS) $(LIBS) -o $@
 
 %.hex: %.elf $(LDSCRIPT)
+	@echo
+	@echo Creating $@
 	$(HEX) $< $@
 
 %.bin: %.elf $(LDSCRIPT)
+	@echo
+	@echo Creating $@
 	$(BIN) $< $@
 
 %.srec: %.elf $(LDSCRIPT)
+	@echo
+	@echo Creating $@
 	$(SREC) $< $@
 
 %.dmp: %.elf $(LDSCRIPT)
+	@echo
+	@echo Creating $@
 	$(OD) $(ODFLAGS) $< > $@
 	@echo
 	@$(SZ) $<
@@ -192,13 +219,12 @@ $(BUILDDIR)/lib$(PROJECT).a: $(OBJS)
 
 clean:
 	@echo Cleaning
-	-rm -fR .dep $(BUILDDIR)
-	@echo
+	-rm -fR $(BUILDDIR)
 	@echo Done
 
 #
 # Include the dependency files, should be the last of the makefile
 #
--include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
+-include $(OBJS:.o=.d)
 
 # *** EOF ***

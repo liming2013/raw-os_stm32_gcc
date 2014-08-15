@@ -169,4 +169,6 @@ ULIBS =
 # End of user defines
 ##############################################################################
 
+VPATH = $(ROOT)
+
 include $(ROOT)/rules.mk
